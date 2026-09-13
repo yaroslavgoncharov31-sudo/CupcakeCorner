@@ -1,10 +1,3 @@
-//
-//  Order.swift
-//  CupcakeCorner
-//
-//  Created by Yaroslav on 9/12/26.
-//
-
 import Foundation
 
 @Observable
@@ -38,12 +31,9 @@ class Order: Codable {
     var streetAddress = ""
     var zip = ""
     var city = ""
-
-    var hasValidAdress: Bool {
-        if name.isEmpty || streetAddress.isEmpty || zip.isEmpty || city.isEmpty {
-            return false
-        }
-        return true
+    var hasValidAddress: Bool {
+        [name, streetAddress, zip, city]
+            .allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     }
     var cost: Decimal {
         var cost = type.cost * Decimal(quantity)

@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var path = NavigationPath()
     @State private var order = Order()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             Form {
                 Section {
                     Picker("Select your cake type", selection: $order.type) {
@@ -25,9 +26,17 @@ struct ContentView: View {
                     } 
                 }
                 Section {
-                    NavigationLink("Adress details") {
-                        AdressView(order: order)
+                    Button("Adress details") {
+                        path.append(Route.addressView)
                     }
+                }
+            }
+            .navigationDestination(for: Route.self) { route in  
+                switch route {
+                case .addressView:
+                    AdressView(order: order, path: $path)
+                case .checkoutView:
+                    CheckoutView(order: order, path: $path)
                 }
             }
         }

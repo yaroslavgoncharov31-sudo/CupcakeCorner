@@ -4,6 +4,8 @@ struct CheckoutView: View {
     var order: Order
     @State private var confirmationMessage = ""
     @State private var showingConfirmation = false
+    @State private var orderWasPlaced = false
+    @Binding var path: NavigationPath
 
     var body: some View {
         ScrollView {
@@ -22,20 +24,30 @@ struct CheckoutView: View {
                 Button("Place order") {
                     Task {
                         guard let decoded = try? await NetworkManager.placeOrder(order: order) else {
+                            confirmationMessage = "Failed to proceed order. Please try again"
+                            showingConfirmation = true
                             return
                         }
                         confirmationMessage = "Your order for \(decoded.quantity)x \(order.type) cupcakes is on it's way!"
                         showingConfirmation = true
                     }
+                    orderWasPlaced = true
                 }
                     .padding()
+            }
+        }
+        .onDisappear {
+            if orderWasPlaced {
+                order.reset()
             }
         }
         .navigationTitle("Check out")
         .navigationBarTitleDisplayMode(.inline)
         .scrollBounceBehavior(.basedOnSize)
-        .alert("Thank you", isPresented: $showingConfirmation) {
-            Button("OK") { }
+        .alert("Order status", isPresented: $showingConfirmation) {
+            Button("OK") {
+                path = NavigationPath()
+            }
         } message: {
             Text(confirmationMessage)
         }
@@ -45,5 +57,6 @@ struct CheckoutView: View {
 }
 
 #Preview {
-    CheckoutView(order: Order())
+    @Previewable @State var path = NavigationPath()
+    CheckoutView(order: Order(), path: $path)
 }

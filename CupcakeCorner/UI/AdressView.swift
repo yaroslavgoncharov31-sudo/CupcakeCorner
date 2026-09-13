@@ -1,14 +1,8 @@
-//
-//  AdressView.swift
-//  CupcakeCorner
-//
-//  Created by Yaroslav on 9/13/26.
-//
-
 import SwiftUI
 
 struct AdressView: View {
     @Bindable var order: Order
+    @Binding var path: NavigationPath
 
     var body: some View {
         Form {
@@ -17,13 +11,15 @@ struct AdressView: View {
                 TextField("Street address", text: $order.streetAddress)
                 TextField("City", text: $order.city)
                 TextField("Zip", text: $order.zip)
+                TextField("Email", text: $order.email)
             }
             Section {
-                NavigationLink("Proceed to checkout") {
-                    CheckoutView(order: order)
+                Button("Proceed to checkout") {
+                    order.saveAddress()
+                    path.append(Route.checkoutView)
                 }
             }
-            .disabled(order.hasValidAdress == false)
+            .disabled(order.hasValidAddress == false)
         }
         .navigationTitle("Delivery details")
         .navigationBarTitleDisplayMode(.inline)
@@ -31,5 +27,6 @@ struct AdressView: View {
 }
 
 #Preview {
-    AdressView(order: Order())
+    @Previewable @State var path = NavigationPath()
+    AdressView(order: Order(), path: $path)
 }

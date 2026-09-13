@@ -8,7 +8,18 @@
 import Foundation
 
 @Observable
-class Order {
+class Order: Codable {
+    enum CodingKeys: String, CodingKey {
+        case _type = "type"
+        case _quantity = "quantity"
+        case _specialRequestEnabled = "specialRequestEnabled"
+        case _extraFrosting = "extraFrosting"
+        case _addSprinkles = "addSprinkles"
+        case _name = "name"
+        case _city = "city"
+        case _streetAddress = "streetAddress"
+        case _zip = "zip"
+    }
     var type: CupcakeType = .chocolate
     var quantity = 3
 
@@ -34,5 +45,15 @@ class Order {
         }
         return true
     }
+    var cost: Decimal {
+        var cost = type.cost * Decimal(quantity)
 
+        if extraFrosting {
+            cost += Decimal(quantity)
+        }
+        if addSprinkles {
+            cost += Decimal(quantity) / 2
+        }
+        return cost
+    }
 }

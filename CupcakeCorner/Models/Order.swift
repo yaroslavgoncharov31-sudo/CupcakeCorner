@@ -64,4 +64,10 @@ class Order: Codable {
         UserDefaults.standard.set(zip, forKey: "zip")
         UserDefaults.standard.set(email, forKey: "email")
     }
+    
+    func reset() {
+        type = .chocolate
+        quantity = 3
+        specialRequestEnabled = false
+    }
 }

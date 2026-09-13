@@ -12,6 +12,7 @@ class Order: Codable {
         case _city = "city"
         case _streetAddress = "streetAddress"
         case _zip = "zip"
+        case _email = "email"
     }
     var type: CupcakeType = .chocolate
     var quantity = 3
@@ -31,8 +32,9 @@ class Order: Codable {
     var streetAddress = ""
     var zip = ""
     var city = ""
+    var email = ""
     var hasValidAddress: Bool {
-        [name, streetAddress, zip, city]
+        [name, streetAddress, zip, city, email]
             .allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     }
     var cost: Decimal {
@@ -45,5 +47,21 @@ class Order: Codable {
             cost += Decimal(quantity) / 2
         }
         return cost
+    }
+
+    init() {
+        name = UserDefaults.standard.string(forKey: "name") ?? ""
+        streetAddress = UserDefaults.standard.string(forKey: "streetAddress") ?? ""
+        city = UserDefaults.standard.string(forKey: "city") ?? ""
+        zip = UserDefaults.standard.string(forKey: "zip") ?? ""
+        email = UserDefaults.standard.string(forKey: "email") ?? ""
+    }
+
+     func saveAddress() {
+        UserDefaults.standard.set(name, forKey: "name")
+        UserDefaults.standard.set(streetAddress, forKey: "streetAddress")
+        UserDefaults.standard.set(city, forKey: "city")
+        UserDefaults.standard.set(zip, forKey: "zip")
+        UserDefaults.standard.set(email, forKey: "email")
     }
 }

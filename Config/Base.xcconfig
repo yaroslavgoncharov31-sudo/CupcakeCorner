@@ -1,0 +1,7 @@
+
+// Default value: the app builds without a key.
+REQRES_API_KEY =
+
+// Optional include: no error if the file is missing.
+#include? "Secrets.xcconfig"
+

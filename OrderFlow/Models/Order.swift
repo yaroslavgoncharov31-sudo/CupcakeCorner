@@ -34,8 +34,8 @@ class Order: Codable {
     var city = ""
     var email = ""
     var hasValidAddress: Bool {
-        [name, streetAddress, zip, city, email]
-            .allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+         [name, streetAddress, zip, city, email]
+            .allSatisfy { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty } && email.hasSuffix("@") && zip.count <= 16
     }
     var cost: Decimal {
         var cost = type.cost * Decimal(quantity)

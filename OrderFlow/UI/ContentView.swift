@@ -31,16 +31,16 @@ struct ContentView: View {
                     }
                 }
             }
-            .navigationDestination(for: Route.self) { route in  
+            .navigationTitle("Cupcake Corner")
+            .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .addressView:
-                    AdressView(order: order, path: $path)
+                    AddressView(order: order, path: $path)
                 case .checkoutView:
                     CheckoutView(order: order, path: $path)
                 }
             }
         }
-        .navigationTitle("Cupcake Corner")
     }
 }
 

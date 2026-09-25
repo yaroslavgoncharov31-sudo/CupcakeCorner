@@ -5,6 +5,7 @@ struct CheckoutView: View {
     @State private var confirmationMessage = ""
     @State private var showingConfirmation = false
     @State private var orderWasPlaced = false
+    @State private var isPlacingOrder = false
     @Binding var path: NavigationPath
 
     var body: some View {
@@ -21,24 +22,18 @@ struct CheckoutView: View {
 
                 Text("Your total cost is: \(order.cost, format: .currency(code: "USD"))")
                     .font(.title)
-                Button("Place order") {
-                    Task {
-                        guard let decoded = try? await NetworkManager.placeOrder(order: order) else {
-                            confirmationMessage = "Failed to proceed order. Please try again"
-                            showingConfirmation = true
-                            return
+                if isPlacingOrder {
+                    ProgressView()
+                } else {
+                    Button("Place order") {
+                        isPlacingOrder = true
+                        Task {
+                            await placeOrder()
                         }
-                        confirmationMessage = "Your order for \(decoded.quantity)x \(order.type) cupcakes is on it's way!"
-                        showingConfirmation = true
                     }
-                    orderWasPlaced = true
-                }
+                    .disabled(isPlacingOrder)
                     .padding()
-            }
-        }
-        .onDisappear {
-            if orderWasPlaced {
-                order.reset()
+                }
             }
         }
         .navigationTitle("Check out")
@@ -46,13 +41,28 @@ struct CheckoutView: View {
         .scrollBounceBehavior(.basedOnSize)
         .alert("Order status", isPresented: $showingConfirmation) {
             Button("OK") {
-                path = NavigationPath()
+                if orderWasPlaced {
+                    path = NavigationPath()
+                    order.reset()
+                }
             }
         } message: {
             Text(confirmationMessage)
         }
+    }
+    private func placeOrder() async {
+        isPlacingOrder = true
+        defer { isPlacingOrder = false }
 
-
+        do {
+            let finalOrder = try await NetworkManager.placeOrder(order: order)
+            confirmationMessage = "Your order for \(finalOrder.quantity)x \(finalOrder.type.rawValue) cupcakes is on its way!"
+            orderWasPlaced = true
+        } catch {
+            confirmationMessage = error.localizedDescription
+            orderWasPlaced = false
+        }
+        showingConfirmation = true
     }
 }
 

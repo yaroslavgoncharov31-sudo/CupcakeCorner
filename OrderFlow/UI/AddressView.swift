@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct AdressView: View {
+struct AddressView: View {
     @Bindable var order: Order
     @Binding var path: NavigationPath
 
@@ -28,5 +28,5 @@ struct AdressView: View {
 
 #Preview {
     @Previewable @State var path = NavigationPath()
-    AdressView(order: Order(), path: $path)
+    AddressView(order: Order(), path: $path)
 }
